@@ -2,8 +2,6 @@ import fetch from 'node-fetch';
 
 export const cocktailService = {
   async getCocktail(selectedCocktail) {
-    console.log(selectedCocktail);
-
     async function fetchCocktail(apiModifier) {
       const response = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/${apiModifier}`);
       const cocktail = await response.json();
