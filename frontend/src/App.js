@@ -6,7 +6,6 @@ import {
   Switch,
   Route,
 } from 'react-router-dom';
-import './App.css';
 import Cocktails from './pages/Cocktails';
 
 function App() {
