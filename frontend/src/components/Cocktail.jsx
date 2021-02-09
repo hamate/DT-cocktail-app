@@ -1,26 +1,55 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import generalDataFetch from '../utilities/generalDataFetch';
+import './Cocktail.css';
 
 function Cocktail() {
-  const [randomCocktail, setRandomCocktail] = useState({});
+  const [cocktail, setCocktail] = useState({});
   const [ingredients, setIngredients] = useState([]);
   const [measure, setMeasure] = useState([]);
+  const [searchCocktail, setSearchCocktail] = useState('');
 
   const handleRandomButton = async () => {
     const response = await generalDataFetch('/cocktail');
-    setRandomCocktail(response.jsonData);
+    setCocktail(response.jsonData);
+    setIngredients(response.jsonData.ingredients);
+    setMeasure(response.jsonData.measure);
+  };
+
+  useEffect(() => {
+    handleRandomButton();
+  }, []);
+
+  const handleSearch = async (event) => {
+    event.preventDefault();
+    const response = await generalDataFetch(`/cocktail/${searchCocktail.replace(' ', '%20')}`);
+    setCocktail(response.jsonData);
     setIngredients(response.jsonData.ingredients);
     setMeasure(response.jsonData.measure);
   };
 
   return (
     <div className="cocktail-main-container">
-      <button type="button" className="random-button" onClick={handleRandomButton}>Random cocktail</button>
+      <div className="search-field">
+        <button type="button" className="random-button cocktail-button btn-1" onClick={handleRandomButton}>Random cocktail</button>
+        <form action="" method="get" className="cocktail-form">
+          <label htmlFor="cocktail">Search for cocktail: </label>
+          <input type="text" name="cocktail" id="cocktail" onKeyPress={(event) => event.key === 'Enter' && event.preventDefault()} onChange={(event) => setSearchCocktail(event.target.value)} />
+          <button type="button" className="search-button cocktail-button btn-1" onClick={handleSearch}>Search</button>
+        </form>
+      </div>
       <div className="cocktail-data">
-        <table>
+        <table className="cocktail-table">
           <thead>
             <tr>
-              <th className="cocktail-name">{randomCocktail.name}</th>
+              <th className="cocktail-name">{cocktail.name}</th>
+            </tr>
+            <tr>
+              <td>
+                Ingredients
+              </td>
+              <td>
+                Measure
+              </td>
             </tr>
           </thead>
           <tbody>
@@ -37,8 +66,9 @@ function Cocktail() {
           </tbody>
         </table>
         <div className="cocktail-instruction">
-          {randomCocktail.instruction}
+          {cocktail.instruction}
         </div>
+        <img src={cocktail.img} alt="Cocktail" />
       </div>
     </div>
   );
